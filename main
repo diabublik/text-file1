@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int Count(char line[]) {
+	char templine[200];
+	int words = 0;
+	strcpy(templine, line);
+	char* token = strtok(templine, " ");
+	while (token != NULL) {
+		words++;
+		token = strtok(NULL, " ");
+	}
+	return words;
+}
+
+int main() {
+	FILE* file1, * file2;
+	char name[20], name2[] = "file1", line[200];
+	puts("Input the name of new file:");
+	gets_s(name);
+	file1 = fopen(name, "w+");
+	puts("Input the lines of ENTER:");
+	while (gets_s(line), strlen(line) != 0) {
+		fputs(line, file1);
+		fputs("\n", file1);
+	}
+	rewind(file1);
+	printf("-------------%s-------------\n", name);
+	while (fgets(line, 200, file1) != NULL) {
+		printf("words: %2d | %s", Count(line), line);
+	}
+	rewind(file1);
+	int needquantity, words = 0;
+	puts("\nInput the min quantity of words in the lines that must be:");
+	scanf_s("%d", &needquantity);
+	char* token, templine[200];
+	file2 = fopen(name2, "w+");
+	while (fgets(line, 200, file1) != NULL) {
+		strcpy(templine, line);
+		token = strtok(line, " ");
+		while (token != NULL) {
+			words++;
+			token = strtok(NULL, " ");
+		}
+		if (words > needquantity) {
+			fputs(templine, file2);
+		}
+		words = 0;
+	}
+	rewind(file2);
+	printf("-------------%s-------------\n", name2);
+	while (fgets(line, 200, file2) != NULL) {
+		printf("words: %2d | %s", Count(line), line);
+	}
+	fcloseall();
+	remove(name);
+	remove(name2);
+}
